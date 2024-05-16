@@ -1,2 +1,0 @@
-print('Hungry')
-print('HUNGER')
