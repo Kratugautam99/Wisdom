@@ -1,0 +1,2 @@
+print('Hungry')
+print('HUNGER')
