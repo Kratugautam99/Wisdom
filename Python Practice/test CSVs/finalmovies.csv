@@ -1,0 +1,38 @@
+title,industry,release_year,imdb_rating,studio,budget,revenue,unit,currency,language,age,profit
+Pather Panchali,Bollywood,1955,8.3,Government of West Bengal,70000.0,100000.0,Thousands,INR,Bengali,69,30000000.0
+Doctor Strange in the Multiverse of Madness,Hollywood,2022,7.0,Marvel Studios,200.0,954.8,Millions,USD,English,2,754800000.0
+Thor: The Dark World ,Hollywood,2013,6.8,Marvel Studios,165.0,644.8,Millions,USD,English,11,479799999.99999994
+Thor: Ragnarok ,Hollywood,2017,7.9,Marvel Studios,180.0,854.0,Millions,USD,English,7,674000000.0
+Thor: Love and Thunder ,Hollywood,2022,6.8,Marvel Studios,250.0,670.0,Millions,USD,English,2,420000000.0
+The Shawshank Redemption,Hollywood,1994,9.3,Castle Rock Entertainment,25.0,73.3,Millions,USD,English,30,48300000.0
+Interstellar,Hollywood,2014,8.6,Warner Bros. Pictures,165.0,701.8,Millions,USD,English,10,536799999.99999994
+The Pursuit of Happyness,Hollywood,2006,8.0,Columbia Pictures,55.0,307.1,Millions,USD,English,18,252100000.00000003
+Gladiator,Hollywood,2000,8.5,Universal Pictures  ,103.0,460.5,Millions,USD,English,24,357500000.0
+Titanic,Hollywood,1997,7.9,Paramount Pictures,200.0,2202.0,Millions,USD,English,27,2002000000.0
+It's a Wonderful Life,Hollywood,1946,8.6,Liberty Films,3.18,3.3,Millions,USD,English,78,119999.99999999967
+Avatar,Hollywood,2009,7.8,20th Century Fox,237.0,2847.0,Millions,USD,English,15,2610000000.0
+The Godfather,Hollywood,1972,9.2,Paramount Pictures,7.2,291.0,Millions,USD,English,52,283800000.0
+The Dark Knight,Hollywood,2008,9.0,Syncopy,185.0,1006.0,Millions,USD,English,16,821000000.0
+Schindler's List,Hollywood,1993,9.0,Universal Pictures,22.0,322.2,Millions,USD,English,31,300200000.0
+Jurassic Park,Hollywood,1993,8.2,Universal Pictures,63.0,1046.0,Millions,USD,English,31,983000000.0
+Parasite,Hollywood,2019,8.5,,15.5,263.1,Millions,USD,English,5,247600000.00000003
+Avengers: Endgame,Hollywood,2019,8.4,Marvel Studios,400.0,2798.0,Millions,USD,English,5,2398000000.0
+Avengers: Infinity War,Hollywood,2018,8.4,Marvel Studios,400.0,2048.0,Millions,USD,English,6,1648000000.0
+Captain America: The First Avenger,Hollywood,2011,6.9,Marvel Studios,216.7,370.6,Millions,USD,English,13,153900000.00000003
+Captain America: The Winter Soldier,Hollywood,2014,7.8,Marvel Studios,177.0,714.4,Millions,USD,English,10,537400000.0
+Dilwale Dulhania Le Jayenge,Bollywood,1995,8.0,Yash Raj Films,400.0,2000.0,Millions,INR,Hindi,29,1600000000.0
+3 Idiots,Bollywood,2009,8.4,Vinod Chopra Films,550.0,4000.0,Millions,INR,Hindi,15,3450000000.0
+Kabhi Khushi Kabhie Gham,Bollywood,2001,7.4,Dharma Productions,390.0,1360.0,Millions,INR,Hindi,23,970000000.0
+Bajirao Mastani ,Bollywood,2015,7.2,,1.4,3.5,Billions,INR,Hindi,9,2.1
+Taare Zameen Par,Bollywood,2007,8.3,,120.0,1350.0,Millions,INR,Hindi,17,1230000000.0
+Munna Bhai M.B.B.S.,Bollywood,2003,8.1,Vinod Chopra Productions,100.0,410.0,Millions,INR,Hindi,21,310000000.0
+PK,Bollywood,2014,8.1,Vinod Chopra Films,850.0,8540.0,Millions,INR,Hindi,10,7690000000.0
+Sanju,Bollywood,2018,,Vinod Chopra Films,1.0,5.9,Billions,INR,Hindi,6,4.9
+The Kashmir Files,Bollywood,2022,8.3,Zee Studios,250.0,3409.0,Millions,INR,Hindi,2,3159000000.0
+Bajrangi Bhaijaan,Bollywood,2015,8.1,Salman Khan Films,900.0,11690.0,Millions,INR,Hindi,9,10790000000.0
+Race 3,Bollywood,2018,1.9,Salman Khan Films,1.8,3.1,Billions,INR,Hindi,6,1.3
+Shershaah,Bollywood,2021,8.4,Dharma Productions,500.0,950.0,Millions,INR,Hindi,3,450000000.0
+K.G.F: Chapter 2,Bollywood,2022,8.4,Hombale Films,1.0,12.5,Billions,INR,Kannada,2,11.5
+Pushpa: The Rise - Part 1,Bollywood,2021,7.6,Mythri Movie Makers,2.0,3.6,Billions,INR,Telugu,3,1.6
+RRR,Bollywood,2022,8.0,DVV Entertainment,5.5,12.0,Billions,INR,Telugu,2,6.5
+Baahubali: The Beginning,Bollywood,2015,8.0,Arka Media Works,1.8,6.5,Billions,INR,Telugu,9,4.7
