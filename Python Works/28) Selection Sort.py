@@ -34,8 +34,12 @@ Names = [
     {'First Name': 'Ingrid', 'Last Name': 'Maverick'},
     {'First Name': 'Aahana', 'Last Name': 'Arora'}
 ]
+
 selection_sort(Names,key='First Name')
-print(Names)
+for i in Names:
+    print(i)
+print('\n')
 selection_sort(Names,key='Last Name')
-print(Names)
+for i in Names:
+    print(i)
 

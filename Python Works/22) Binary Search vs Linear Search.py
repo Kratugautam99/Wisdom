@@ -50,6 +50,7 @@ def binary_search(listn,findn):
     if idxs:
         return idxs
     return -1
+
 listn = [1,4,6,9,11,15,15,15,17,21,34,34,56]
 findn = 15
 idxs1 = linear_search(listn, findn)

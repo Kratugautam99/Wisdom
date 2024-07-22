@@ -7,7 +7,7 @@ ans = input("Enter your answer: ")
 if ans == "A":
   print("\nSahi jawab!, Aap 20Lakh rupees jeet gaye hai")
 else:
-  print("\nGalat jawab!, aapka safar yahi tha")
+  print("\nGalat jawab!, aapka safar yahi tak tha")
   sys.exit()
 print("\n2. When India got Independence?\n")
 print("  A. 1949        B. 1947")
@@ -16,7 +16,7 @@ ans = input("Enter your answer: ")
 if ans == "B":
   print("\nSahi jawab!, Aap 40Lakh rupees jeet gaye hai")
 else:
-  print("\nGalat jawab!, aapka safar yahi tha")
+  print("\nGalat jawab!, aapka safar yahi tak tha")
   sys.exit()
 print("\n3. Who is the Prime Minister of India?")
 print('''
@@ -28,7 +28,7 @@ ans = input("Enter your answer: ")
 if ans == "C":
   print("\nSahi jawab!, Aap 60Lakh rupees jeet gaye hai")
 else:
-  print("\nGalat Jawab!, aapka safar yahi tha")
+  print("\nGalat Jawab!, aapka safar yahi tak tha")
   sys.exit()
 print("\n4. Who is the President of India?")
 print('''
@@ -40,7 +40,7 @@ ans = input("Enter your answer: ")
 if ans == "D":
   print("\nSahi jawab!, Aap 80Lakh rupees jeet gaye hai")
 else:
-  print("\nGalat Jawab!, aapka safar yahi tha")
+  print("\nGalat Jawab!, aapka safar yahi tak tha")
   sys.exit()
 print("\n5. Who wrote the Indian National Anthem?")
 print('''
@@ -53,5 +53,5 @@ if ans == "A":
   print("\nSahi jawab!, Aap 1Crore rupees jeet gaye hai")
   sys.exit()
 else:
-  print("\nGalat Jawab!, aapka safar yahi tha")
+  print("\nGalat Jawab!, aapka safar yahi tak tha")
   sys.exit()

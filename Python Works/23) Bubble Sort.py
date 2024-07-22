@@ -1,5 +1,5 @@
 def bubble_sort(ele, key):
-    if key:
+    if key == 'name' or key == 'transaction_amount' or key == 'device':
         size = len(ele)
         for i in range(size-1):
             swapped = False
