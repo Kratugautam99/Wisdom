@@ -1,0 +1,3 @@
+quarter,sum(sold_quantity)
+3,1764002
+4,8425822
