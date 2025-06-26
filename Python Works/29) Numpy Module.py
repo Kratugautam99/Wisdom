@@ -9,4 +9,3 @@ print(np.vstack((a,b)),'\n', np.hstack((a,b)))#v\hstack dtype will be of greater
 print(c:= a>3,a[c])
 a[c]=7
 print(a)
-
