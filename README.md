@@ -91,11 +91,11 @@ Whether you’re a student, job-seeker or self-learner, dive in for daily practi
 ---
 ## 🤝 Contributing
 
-> Contributions welcome!
-> Fork the repo
-> Create a feature branch (git checkout -b feat/YourTopic)
-> Commit your changes (git commit -m "Add your feature")
-> Push (git push origin feat/YourTopic) & open a PR
+**Contributions welcome!**
+1. Fork the repo
+2. Create a feature branch (git checkout -b feat/YourTopic)
+3. Commit your changes (git commit -m "Add your feature")
+4. Push (git push origin feat/YourTopic) & open a PR
 
 ---
 ## 📜 License
