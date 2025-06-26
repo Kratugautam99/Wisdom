@@ -1,4 +1,3 @@
-```markdown
 # Wisdom 📚✨
 
 > A curated learning hub of Python, SQL, DSA and data-science practice—packed with tutorials, code samples, eBooks and real datasets for hands-on mastery.
@@ -36,22 +35,6 @@ Whether you’re a student, job-seeker or self-learner, dive in for daily practi
 
 ---
 
-## 📂 Structure
-```text
-.
-├── books/                   # eBooks & PDF guides
-├── data/                    # Sample datasets (CSV, JSON)
-├── python/                  # Core Python practice files
-│   ├── basics/              # Syntax, control flow, OOP
-│   ├── projects/            # Mini-projects & scripts
-├── sql/                     # SQL assignments & cheat-sheets
-├── dsa/                     # Data structures & algorithms code
-├── tutorials/               # Jupyter notebooks & walkthroughs
-└── README.md                
-```
-
----
-
 ## ⚙️ Installation
 1. Clone this repo  
    ```bash
@@ -67,8 +50,6 @@ Whether you’re a student, job-seeker or self-learner, dive in for daily practi
    ```bash
    pip install -r requirements.txt
    ```
-
----
 
 ## ▶️ Usage
 - Browse **tutorials/** for step-by-step Jupyter notebooks  
