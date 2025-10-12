@@ -45,7 +45,11 @@ Whether you’re a student, job-seeker or self-learner, dive in for daily practi
 │   ├── test CSVs/  
 │   ├── test PDFs/  
 │   ├── test Text/  
-│   └── Wisdom/                      # Supplemental Python examples
+│   └── Wisdom/                      
+├── Eurekathon-2024/                  # This is the Internal Hackathon Version of SIH conducted in my college.
+│   ├── BeachDatasetFinal.csv  
+│   ├── Smart India Hackathon.7z
+│   ├── SmartIndiaHackathonMLModelFinal.ipynb 
 ├── SQL Resume Challenge/             # SQL practice assignments
 │   ├── Problems/  
 │   ├── Solutions/  
