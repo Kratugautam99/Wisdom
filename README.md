@@ -1,4 +1,4 @@
-# Wisdom 📚✨
+# Wisdom Primary Repo 📚✨
 
 > A curated learning hub of Python, SQL, DSA and data-science practice—packed with tutorials, code samples, eBooks and real datasets for hands-on mastery.
 
@@ -6,7 +6,7 @@
 ## 🚀 Table of Contents
 - [ℹ️ About](#-about)  
 - [💽 Features](#-features)  
-- [📂 Structure](#-structure)  
+- [📂 Directory Structure](#-structure)  
 - [⚙️ Installation](#️-installation)  
 - [▶️ Usage](#️-usage)  
 - [🤝 Contributing](#-contributing)  
@@ -32,20 +32,50 @@ Whether you’re a student, job-seeker or self-learner, dive in for daily practi
 - 🔄 **Modular Layout**: Pick and choose what to learn next
   
 ---
-## 📂 Structure
+## 📂 Directory Structure
 
 ```text
 .
 ├── .github/                          # CI workflows, issue/pr templates
-├── Python Works/                     # Python practice materials
-│   ├── DSAQs in Python by Goodrich et al./  
+├── Python Works/                     # Python practice materials 
 │   ├── Pandas-Matplotlib-Seaborn/  
 │   ├── Practice File/  
 │   ├── test AVIFs/  
 │   ├── test CSVs/  
 │   ├── test PDFs/  
 │   ├── test Text/  
-│   └── Wisdom/                      
+│   ├── 01) Cheap Calculator.py               # Basic arithmetic operations
+│   ├── 02) Greetings Sir.py                  # Simple greeting program
+│   ├── 03) Kaun Banega Crorepati.py          # Quiz-style game implementation
+│   ├── 04) Secret Language.py                # Text encoding/decoding logic
+│   ├── 05) Snake Water Gun.py                # Classic game simulation
+│   ├── 06) Library Books.py                  # Book management system
+│   ├── 07) JPG Renamer.py                    # Batch rename JPG files
+│   ├── 08) PDF Merger.py                     # Merge multiple PDFs
+│   ├── 09) Auto Shoutouter.py                # Automated message broadcaster
+│   ├── 10) News Fetcher.py                   # Fetch latest news via API
+│   ├── 11) Drink Water Notifier.py           # Hydration reminder script
+│   ├── 12) CSV Converter.py                  # Convert data into CSV format
+│   ├── 13) ArgParse.py                       # Command-line argument parser demo
+│   ├── 14) Species Data.py                   # Handle biological dataset
+│   ├── 15) Doubly LinkedList.py              # Data structure implementation
+│   ├── 16) Text Data Collection.py           # Collect and store text data
+│   ├── 17) HashTable.py                      # Hash table implementation
+│   ├── 18) Queue.py                          # Queue data structure
+│   ├── 19) General Tree.py                   # General tree structure
+│   ├── 20) Binary Tree.py                    # Binary tree implementation
+│   ├── 21) Graph.py                          # Graph data structure
+│   ├── 22) Binary Search vs Linear Search.py # Search algorithm comparison
+│   ├── 23) Bubble Sort.py                    # Bubble sort algorithm
+│   ├── 24) Quick Sort.py                     # Quick sort algorithm
+│   ├── 25) Insertion Sort.py                 # Insertion sort algorithm
+│   ├── 26) Merge Sort.py                     # Merge sort algorithm
+│   ├── 27) Shell Sort.py                     # Shell sort algorithm
+│   ├── 28) Selection Sort.py                 # Selection sort algorithm
+│   ├── 29) Numpy Module.py                   # NumPy usage demo
+│   ├── 30) Pandas Module.py                  # Pandas usage demo
+│   ├── 31) Matplotlib and Seaborn Module.py  # Visualization with Matplotlib/Seaborn
+│
 ├── Eurekathon-2024/                  # This is the Internal Hackathon Version of SIH conducted in my college.
 │   ├── BeachDatasetFinal.csv  
 │   ├── Smart India Hackathon.7z
@@ -54,6 +84,7 @@ Whether you’re a student, job-seeker or self-learner, dive in for daily practi
 │   ├── Problems/  
 │   ├── Solutions/  
 │   └── SQL-Practice/  
+├── MongoDB-(DataBases)               # NoSQL Database
 ├── SECURITY.md                       # Security policy  
 └── README.md   
 ```
