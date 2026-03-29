@@ -1,4 +1,4 @@
-# 📚 Wisdom Primary Repo 
+# 📚 Wisdom Primary Repo [AKA Python-Learning with Extensions]
 
 > A curated learning hub of Python, NoSQL, SQL, DSA and Data-Science practice—packed with tutorials, code samples, eBooks and real datasets for hands-on mastery.
 
