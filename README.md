@@ -1,6 +1,6 @@
-# Wisdom Primary Repo 📚✨
+# 📚 Wisdom Primary Repo 
 
-> A curated learning hub of Python, SQL, DSA and data-science practice—packed with tutorials, code samples, eBooks and real datasets for hands-on mastery.
+> A curated learning hub of Python, SQL, DSA and Data-Science practice—packed with tutorials, code samples, eBooks and real datasets for hands-on mastery.
 
 ---
 ## 🚀 Table of Contents
