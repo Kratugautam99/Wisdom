@@ -1,6 +1,63 @@
 # 📚 Wisdom Primary Repo 
 
-> A curated learning hub of Python, SQL, DSA and Data-Science practice—packed with tutorials, code samples, eBooks and real datasets for hands-on mastery.
+> A curated learning hub of Python, NoSQL, SQL, DSA and Data-Science practice—packed with tutorials, code samples, eBooks and real datasets for hands-on mastery.
+
+<div align="center">
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://raw.githubusercontent.com/Kratugautam99/Wisdom-Primary-Repo/main/Demo%20Imgs/Python.jpg" width="350"/><br>
+      <b>Python.jpg</b>
+    </td>
+    <td align="center">
+      <img src="https://raw.githubusercontent.com/Kratugautam99/Wisdom-Primary-Repo/main/Demo%20Imgs/NoSQL.jpg" width="650"/><br>
+      <b>NoSQL.jpg</b>
+    </td>
+  </tr>
+</table>
+
+</div>
+
+
+<div align="center">
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://raw.githubusercontent.com/Kratugautam99/Wisdom-Primary-Repo/main/Demo%20Imgs/Hackathon.jpg" width="309"/><br>
+      <b>Hackathon.jpg</b>
+    </td>
+    <td align="center">
+      <img src="https://raw.githubusercontent.com/Kratugautam99/Wisdom-Primary-Repo/main/Demo%20Imgs/DataScience.jpg" width="309"/><br>
+      <b>DataScience.jpg</b>
+    </td>
+    <td align="center">
+      <img src="https://raw.githubusercontent.com/Kratugautam99/Wisdom-Primary-Repo/main/Demo%20Imgs/SQL.jpg" width="309"/><br>
+      <b>SQL.jpg</b>
+    </td>
+  </tr>
+</table>
+
+</div>
+
+<div align="center">
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://raw.githubusercontent.com/Kratugautam99/Wisdom-Primary-Repo/main/Demo%20Imgs/DSA.jpg" width="650"/><br>
+      <b>DSA.jpg</b>
+    </td>
+    <td align="center">
+      <img src="https://raw.githubusercontent.com/Kratugautam99/Wisdom-Primary-Repo/main/Demo%20Imgs/Certified.png" width="350"/><br>
+      <b>Certified.png</b>
+    </td>
+  </tr>
+</table>
+
+</div>
+
 
 ---
 ## 🚀 Table of Contents
@@ -13,6 +70,8 @@
 - [📜 License](#-license)  
 
 ---
+
+<a name="-about"></a>
 ## ℹ️ About
 **Wisdom** is your one-stop repo for sharpening programming and analytics skills. It brings together:  
 - Python practice scripts (syntax, OOP, scripts & mini-projects)  
@@ -32,10 +91,12 @@ Whether you’re a student, job-seeker or self-learner, dive in for daily practi
 - 🔄 **Modular Layout**: Pick and choose what to learn next
   
 ---
+
+<a name="-structure"></a>
 ## 📂 Directory Structure
 
 ```text
-.
+Wisdom-Primary-Repo
 ├── .github/                          # CI workflows, issue/pr templates
 ├── Python Works/                     # Python practice materials 
 │   ├── Pandas-Matplotlib-Seaborn/  
@@ -74,7 +135,7 @@ Whether you’re a student, job-seeker or self-learner, dive in for daily practi
 │   ├── 28) Selection Sort.py                 # Selection sort algorithm
 │   ├── 29) Numpy Module.py                   # NumPy usage demo
 │   ├── 30) Pandas Module.py                  # Pandas usage demo
-│   ├── 31) Matplotlib and Seaborn Module.py  # Visualization with Matplotlib/Seaborn
+│   └── 31) Matplotlib and Seaborn Module.py  # Visualization with Matplotlib/Seaborn
 │
 ├── Eurekathon-2024/                  # This is the Internal Hackathon Version of SIH conducted in my college.
 │   ├── BeachDatasetFinal.csv  
@@ -85,7 +146,8 @@ Whether you’re a student, job-seeker or self-learner, dive in for daily practi
 │   ├── Solutions/  
 │   └── SQL-Practice/  
 ├── MongoDB-(DataBases)               # NoSQL Database
-├── SECURITY.md                       # Security policy  
+├── SECURITY.md                       # Security policy
+├── Demo Imgs                         # Demonstrative Images
 └── README.md   
 ```
 
