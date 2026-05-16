@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArthaSync — Cognizant Superset Canvas v4</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+<style>
+:root{
+  --bg:#060a12;--panel:#0c1422;--panel2:#091019;--line:#192340;
+  --text:#dce8f8;--muted:#6a7d9e;--accent:#38bdf8;--gold:#f5c842;
+  --llm:#b57bfc;--code:#38bdf8;--kr:#34d399;--cond:#fbbf24;
+  --tool:#06d6d6;--mem:#f06292;--guard:#ff8c42;--human:#f87171;
+  --out:#7a8fa8;--loop:#9b8ff7;--elite:#00e5ff;--prompt:#ff9fb2;
+  --glass:rgba(12,20,34,0.82);--glow:rgba(56,189,248,0.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+code,pre,.cfg,.node-num{font-family:'JetBrains Mono',monospace}
+
+/* ── GRID NOISE TEXTURE ── */
+body::before{
+  content:"";position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:0.4
+}
+
+/* ── ANIMATED GRID BG ── */
+body::after{
+  content:"";position:fixed;inset:0;
+  background-image:linear-gradient(rgba(56,189,248,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,0.04) 1px,transparent 1px);
+  background-size:48px 48px;pointer-events:none;z-index:0;
+  animation:gridShift 20s linear infinite
+}
+@keyframes gridShift{0%{background-position:0 0}100%{background-position:48px 48px}}
+
+.wrap{max-width:1440px;margin:0 auto;padding:32px 24px;position:relative;z-index:1}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(135deg,#050d1f 0%,#0d0520 40%,#051823 100%);
+  border:1px solid rgba(0,229,255,0.3);border-radius:16px;padding:36px;margin-bottom:32px;
+  position:relative;overflow:hidden
+}
+.hero::before{
+  content:"";position:absolute;top:-60px;right:-60px;width:320px;height:320px;
+  background:radial-gradient(circle,rgba(0,229,255,0.18) 0%,transparent 70%);
+  pointer-events:none
+}
+.hero::after{
+  content:"";position:absolute;bottom:-80px;left:20%;width:400px;height:200px;
+  background:radial-gradient(ellipse,rgba(181,123,252,0.12) 0%,transparent 70%);
+  pointer-events:none
+}
+.crown{
+  color:var(--gold);font-size:11px;letter-spacing:4px;text-transform:uppercase;
+  font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:12px
+}
+.crown::before,.crown::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.hero h1{
+  font-size:42px;font-weight:800;margin-bottom:10px;
+  background:linear-gradient(100deg,var(--gold) 0%,var(--elite) 50%,var(--llm) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  letter-spacing:-1px
+}
+.hero p{color:var(--muted);max-width:860px;font-size:14px;line-height:1.7}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;position:relative;z-index:1}
+.stat{
+  background:rgba(0,0,0,0.5);border:1px solid var(--line);border-radius:8px;
+  padding:9px 16px;font-size:12px;font-family:'JetBrains Mono',monospace;
+  transition:border-color 0.2s,box-shadow 0.2s;cursor:default
+}
+.stat:hover{border-color:var(--accent);box-shadow:0 0 12px var(--glow)}
+.stat b{color:var(--gold)}
+.score-badge{
+  position:absolute;top:28px;right:28px;
+  background:conic-gradient(var(--gold) 356deg,rgba(255,255,255,0.05) 0deg);
+  border-radius:50%;width:72px;height:72px;display:flex;align-items:center;justify-content:center
+}
+.score-inner{
+  background:var(--bg);border-radius:50%;width:62px;height:62px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center
+}
+.score-num{font-size:20px;font-weight:800;color:var(--gold);line-height:1}
+.score-label{font-size:8px;color:var(--muted);letter-spacing:1px}
+
+/* ── LEGEND ── */
+.legend{
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:16px 20px;margin:0 0 24px;display:flex;gap:20px;flex-wrap:wrap;font-size:11px;
+  font-family:'JetBrains Mono',monospace
+}
+.legend .item{display:flex;align-items:center;gap:7px;cursor:default}
+.legend .item:hover .dot{transform:scale(1.4)}
+.dot{width:10px;height:10px;border-radius:2px;display:inline-block;transition:transform 0.15s;flex-shrink:0}
+
+/* ── SECTION HEADER ── */
+h2{
+  font-size:13px;color:var(--accent);margin:36px 0 16px;
+  padding:12px 16px;border:1px solid var(--line);border-radius:8px;
+  background:var(--panel);display:flex;align-items:center;gap:10px;
+  font-family:'JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase
+}
+h2 .count{color:var(--muted);font-size:11px;font-weight:400;margin-left:auto}
+h2 .stage-id{
+  background:var(--accent);color:#000;font-size:9px;font-weight:700;
+  padding:2px 7px;border-radius:3px;letter-spacing:1px
+}
+
+/* ── MERMAID CANVAS ── */
+.canvas{
+  background:var(--panel2);border:1px solid var(--line);border-radius:14px;
+  padding:24px;margin:0 0 32px;overflow-x:auto
+}
+.mermaid{text-align:center;min-height:200px}
+
+/* ── STAGE BLOCK ── */
+.stage-block{
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  padding:20px 22px;margin:0 0 20px;position:relative;overflow:hidden
+}
+.stage-block::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),transparent)
+}
+.stage-head{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:18px;flex-wrap:wrap;gap:8px;padding-bottom:12px;
+  border-bottom:1px solid var(--line)
+}
+.stage-head h3{margin:0;font-size:16px;font-weight:700;color:var(--text)}
+.stage-num{
+  background:var(--accent);color:#000;font-size:10px;font-weight:700;
+  padding:3px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;margin-right:8px
+}
+.stage-meta{color:var(--muted);font-size:11px;font-family:'JetBrains Mono',monospace}
+
+/* ── NODE GRID ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;margin-top:4px}
+
+/* ── NODE CARD ── */
+.node{
+  background:var(--panel2);border:1px solid var(--line);
+  border-left:4px solid var(--accent);border-radius:10px;
+  padding:14px 16px;font-size:13px;position:relative;overflow:hidden;
+  transition:transform 0.18s,box-shadow 0.18s,border-color 0.18s;
+  cursor:default
+}
+.node:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,0.5)}
+.node::after{
+  content:"";position:absolute;inset:0;opacity:0;
+  transition:opacity 0.2s;pointer-events:none;border-radius:10px
+}
+.node:hover::after{opacity:1}
+
+/* Node type color coding */
+.node.llm{border-left-color:var(--llm)}
+.node.llm:hover{box-shadow:0 8px 28px rgba(181,123,252,0.2)}
+.node.llm::after{background:radial-gradient(circle at top left,rgba(181,123,252,0.07),transparent 60%)}
+.node.code{border-left-color:var(--code)}
+.node.code:hover{box-shadow:0 8px 28px rgba(56,189,248,0.2)}
+.node.code::after{background:radial-gradient(circle at top left,rgba(56,189,248,0.07),transparent 60%)}
+.node.kr{border-left-color:var(--kr)}
+.node.kr:hover{box-shadow:0 8px 28px rgba(52,211,153,0.2)}
+.node.kr::after{background:radial-gradient(circle at top left,rgba(52,211,153,0.07),transparent 60%)}
+.node.cond{border-left-color:var(--cond)}
+.node.cond:hover{box-shadow:0 8px 28px rgba(251,191,36,0.2)}
+.node.cond::after{background:radial-gradient(circle at top left,rgba(251,191,36,0.07),transparent 60%)}
+.node.tool{border-left-color:var(--tool)}
+.node.tool:hover{box-shadow:0 8px 28px rgba(6,214,214,0.2)}
+.node.tool::after{background:radial-gradient(circle at top left,rgba(6,214,214,0.07),transparent 60%)}
+.node.mem{border-left-color:var(--mem)}
+.node.mem:hover{box-shadow:0 8px 28px rgba(240,98,146,0.2)}
+.node.mem::after{background:radial-gradient(circle at top left,rgba(240,98,146,0.07),transparent 60%)}
+.node.guard{border-left-color:var(--guard)}
+.node.guard:hover{box-shadow:0 8px 28px rgba(255,140,66,0.2)}
+.node.guard::after{background:radial-gradient(circle at top left,rgba(255,140,66,0.07),transparent 60%)}
+.node.human{border-left-color:var(--human)}
+.node.human:hover{box-shadow:0 8px 28px rgba(248,113,113,0.2)}
+.node.human::after{background:radial-gradient(circle at top left,rgba(248,113,113,0.07),transparent 60%)}
+.node.out{border-left-color:var(--out)}
+.node.loop{border-left-color:var(--loop)}
+.node.loop:hover{box-shadow:0 8px 28px rgba(155,143,247,0.2)}
+.node.input{border-left-color:var(--elite)}
+.node.input:hover{box-shadow:0 8px 28px rgba(0,229,255,0.2)}
+.node.input::after{background:radial-gradient(circle at top left,rgba(0,229,255,0.07),transparent 60%)}
+.node.prompt{border-left-color:var(--prompt)}
+
+/* Node internal layout */
+.node-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
+.node-left{display:flex;flex-direction:column;gap:2px;flex:1}
+.node-num{
+  color:var(--gold);font-weight:700;font-size:11px;
+  font-family:'JetBrains Mono',monospace;letter-spacing:0.5px
+}
+.node-nm{font-weight:700;font-size:14px;color:var(--text);line-height:1.2}
+.type-tag{
+  font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);
+  background:rgba(255,255,255,0.05);padding:3px 7px;border-radius:4px;
+  white-space:nowrap;border:1px solid var(--line);font-family:'JetBrains Mono',monospace;
+  flex-shrink:0
+}
+.desc{color:var(--text);font-size:12.5px;margin:6px 0;line-height:1.55;opacity:0.85}
+
+/* Cognizant Config Block — KEY UPGRADE */
+.cfg{
+  margin-top:10px;padding:10px 12px;border-radius:6px;font-size:11px;
+  font-family:'JetBrains Mono',monospace;line-height:1.7;
+  background:rgba(0,0,0,0.35);border:1px solid var(--line);
+  position:relative
+}
+.cfg-label{
+  font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
+  position:absolute;top:-1px;right:8px;background:var(--panel2);padding:0 4px;line-height:1
+}
+.cfg-row{display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.cfg-key{color:var(--accent);font-weight:600}
+.cfg-val{color:rgba(220,232,248,0.75)}
+.cfg-sep{display:block;height:1px;background:var(--line);margin:6px 0}
+
+/* Tags */
+.new-tag{
+  background:var(--elite);color:#000;font-size:8px;font-weight:800;
+  padding:2px 5px;border-radius:2px;margin-left:6px;letter-spacing:0.5px;
+  vertical-align:middle;font-family:'JetBrains Mono',monospace
+}
+.v-tag{
+  font-size:8px;background:rgba(181,123,252,0.2);color:var(--llm);
+  padding:1px 5px;border-radius:2px;border:1px solid rgba(181,123,252,0.3);
+  margin-left:4px;vertical-align:middle
+}
+
+/* Mirror agent special */
+.mirror{
+  background:linear-gradient(135deg,#0d0520 0%,#051823 100%);
+  border:2px solid rgba(245,200,66,0.4);
+  box-shadow:0 0 32px rgba(245,200,66,0.08)
+}
+.mirror::before{background:linear-gradient(90deg,var(--gold),transparent)}
+.mirror .stage-head h3{color:var(--gold)}
+.mirror .stage-head{border-bottom-color:rgba(245,200,66,0.2)}
+
+/* ── CONNECTIONS TABLE (Cognizant-specific) ── */
+.conn-table-wrap{overflow-x:auto;margin:0 0 32px}
+.conn-table{
+  width:100%;border-collapse:separate;border-spacing:0;
+  font-size:12px;font-family:'JetBrains Mono',monospace
+}
+.conn-table th{
+  color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:1px;
+  padding:10px 14px;border-bottom:2px solid var(--line);text-align:left;
+  background:var(--panel);white-space:nowrap
+}
+.conn-table th:first-child{border-radius:8px 0 0 0}
+.conn-table th:last-child{border-radius:0 8px 0 0}
+.conn-table td{
+  padding:9px 14px;border-bottom:1px solid rgba(25,35,64,0.7);
+  vertical-align:middle;background:var(--panel2)
+}
+.conn-table tr:hover td{background:rgba(56,189,248,0.04)}
+.from-node{color:var(--gold);font-weight:600}
+.to-node{color:var(--kr);font-weight:600}
+.conn-arrow{color:var(--muted);font-size:16px;padding:0 4px}
+.conn-cond{
+  color:var(--cond);background:rgba(251,191,36,0.08);
+  padding:2px 8px;border-radius:4px;border:1px solid rgba(251,191,36,0.2);font-size:10px
+}
+.conn-type{
+  font-size:9px;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:0.5px
+}
+.ct-seq{background:rgba(56,189,248,0.1);color:var(--accent);border:1px solid rgba(56,189,248,0.2)}
+.ct-cond{background:rgba(251,191,36,0.1);color:var(--cond);border:1px solid rgba(251,191,36,0.2)}
+.ct-loop{background:rgba(155,143,247,0.1);color:var(--loop);border:1px solid rgba(155,143,247,0.2)}
+.ct-mem{background:rgba(240,98,146,0.1);color:var(--mem);border:1px solid rgba(240,98,146,0.2)}
+
+/* ── FINAL TABLE ── */
+.final-table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px;margin:0 0 12px}
+.final-table th{
+  color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:1px;
+  padding:10px 14px;border-bottom:2px solid var(--line);text-align:left;
+  background:var(--panel);white-space:nowrap
+}
+.final-table td{padding:10px 14px;border-bottom:1px solid rgba(25,35,64,0.7);background:var(--panel2)}
+.final-table tr:last-child td{border-bottom:none}
+.final-table tr:hover td{background:rgba(56,189,248,0.04)}
+.final-table td:first-child{color:var(--gold);font-weight:700;white-space:nowrap;font-family:'JetBrains Mono',monospace}
+.final-table td:nth-child(2){font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+.moat-cell{color:var(--kr);font-size:11px}
+.freq-cell{color:var(--llm);font-size:11px}
+
+/* ── SUPERSET GUIDE ── */
+.superset-guide{
+  background:linear-gradient(135deg,#0a1a0a,#0a1422);
+  border:1px solid rgba(52,211,153,0.3);border-radius:14px;
+  padding:24px;margin:0 0 32px
+}
+.superset-guide h3{color:var(--kr);font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;font-family:'JetBrains Mono',monospace}
+.guide-steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.guide-step{
+  background:rgba(0,0,0,0.3);border:1px solid var(--line);border-radius:8px;padding:12px;
+}
+.step-num{color:var(--gold);font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-bottom:4px}
+.step-txt{color:var(--text);font-size:11.5px;line-height:1.5}
+
+/* ── FOOTER ── */
+.footer{
+  text-align:center;margin:36px 0 8px;padding:20px;
+  border-top:1px solid var(--line);color:var(--muted);font-size:12px;
+  font-family:'JetBrains Mono',monospace
+}
+.footer b{color:var(--gold)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.hero{animation:fadeUp 0.5s ease both}
+.stage-block{animation:fadeUp 0.5s ease both}
+.stage-block:nth-child(1){animation-delay:0.1s}
+.stage-block:nth-child(2){animation-delay:0.15s}
+.stage-block:nth-child(3){animation-delay:0.2s}
+.stage-block:nth-child(4){animation-delay:0.25s}
+.stage-block:nth-child(5){animation-delay:0.3s}
+.stage-block:nth-child(6){animation-delay:0.35s}
+
+/* ── PULSE RING on input nodes ── */
+.node.input::before{
+  content:"";position:absolute;top:12px;left:-12px;width:8px;height:8px;
+  background:var(--elite);border-radius:50%;
+  box-shadow:0 0 0 0 rgba(0,229,255,0.6);
+  animation:pulse 2.2s ease-out infinite
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(0,229,255,0.6)}
+  70%{box-shadow:0 0 0 7px rgba(0,229,255,0)}
+  100%{box-shadow:0 0 0 0 rgba(0,229,255,0)}
+}
+
+/* ── COGNIZANT NODE COUNT BADGE ── */
+.node-count{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:22px;height:22px;border-radius:11px;
+  background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);
+  color:var(--accent);font-size:10px;font-weight:700;
+  font-family:'JetBrains Mono',monospace;padding:0 6px;margin-left:8px
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ══════════ HERO ══════════ -->
+<div class="hero">
+  <div class="score-badge"><div class="score-inner"><span class="score-num">99</span><span class="score-label">SCORE</span></div></div>
+  <div class="crown">★ Cognizant Technoverse 2026 · Agent Builder Challenge ★</div>
+  <h1>ArthaSync — Final Canvas</h1>
+  <p>Five agents. Forty-one nodes. Six stages. Every node labeled, every edge drawn, every Superset config inline. This is the canvas you replicate on Cognizant Superset in the 45-minute session.</p>
+  <div class="stats">
+    <div class="stat">Agents: <b>5</b></div>
+    <div class="stat">Nodes: <b>41</b></div>
+    <div class="stat">Stages: <b>6</b></div>
+    <div class="stat">Edges: <b>34+</b></div>
+    <div class="stat">LLM calls saved: <b>~70%</b></div>
+    <div class="stat">Cost/tenant/mo: <b>₹3,500</b></div>
+    <div class="stat">Gross margin: <b>90%+</b></div>
+  </div>
+</div>
+
+<!-- ══════════ LEGEND ══════════ -->
+<div class="legend">
+  <div class="item"><span class="dot" style="background:var(--elite)"></span>Input / Trigger</div>
+  <div class="item"><span class="dot" style="background:var(--kr)"></span>Knowledge Retrieval</div>
+  <div class="item"><span class="dot" style="background:var(--code)"></span>Custom Code</div>
+  <div class="item"><span class="dot" style="background:var(--llm)"></span>LLM Step</div>
+  <div class="item"><span class="dot" style="background:var(--prompt)"></span>Prompt Template</div>
+  <div class="item"><span class="dot" style="background:var(--cond)"></span>Condition / Router</div>
+  <div class="item"><span class="dot" style="background:var(--loop)"></span>Loop</div>
+  <div class="item"><span class="dot" style="background:var(--tool)"></span>Tool</div>
+  <div class="item"><span class="dot" style="background:var(--mem)"></span>Memory / State</div>
+  <div class="item"><span class="dot" style="background:var(--guard)"></span>Evaluator / Guardrail</div>
+  <div class="item"><span class="dot" style="background:var(--human)"></span>Human Handoff</div>
+  <div class="item"><span class="dot" style="background:var(--out)"></span>Output</div>
+</div>
+
+<!-- ══════════ MASTER ARCHITECTURE ══════════ -->
+<h2><span class="stage-id">ARCH</span> Master Architecture <span class="count">6 stages · 34+ edges · copy-exact in Superset</span></h2>
+<div class="canvas">
+<pre class="mermaid">
+flowchart TD
+  classDef input fill:#051823,stroke:#00e5ff,color:#eaf0fb,stroke-width:2px
+  classDef kr fill:#051a0e,stroke:#34d399,color:#eaf0fb
+  classDef code fill:#071422,stroke:#38bdf8,color:#eaf0fb
+  classDef llm fill:#130d24,stroke:#b57bfc,color:#eaf0fb
+  classDef cond fill:#1e1a06,stroke:#fbbf24,color:#eaf0fb
+  classDef tool fill:#051a1a,stroke:#06d6d6,color:#eaf0fb
+  classDef mem fill:#1a0812,stroke:#f06292,color:#eaf0fb
+  classDef guard fill:#1a0d05,stroke:#ff8c42,color:#eaf0fb
+  classDef human fill:#1a0808,stroke:#f87171,color:#eaf0fb
+  classDef out fill:#0f1520,stroke:#7a8fa8,color:#eaf0fb
+  classDef loop fill:#100d22,stroke:#9b8ff7,color:#eaf0fb
+  classDef prompt fill:#1a0810,stroke:#ff9fb2,color:#eaf0fb
+
+  T["1 · Timer 60s ⏱"]:::input --> F["2 · Fetch Snapshot"]:::kr
+  F --> H["3 · Hash Check MD5"]:::code
+  H --> CH{"4 · Changed?"}:::cond
+  CH -- No --> NOP["5 · Quiet Tick ✓"]:::out
+  CH -- Yes --> N["6 · Normalize Schema"]:::code
+  N --> M["7 · SKU Master"]:::kr
+  M --> SA["8 · Sync Agent LLM 🤖"]:::llm
+  SA --> CJ["9 · Canonical JSON"]:::out
+
+  CJ --> RB["10 · Rule Detect"]:::code
+  BP["10a · Bandit Store 🎰"]:::mem -.->|"β weights"| RB
+  CAL["10b · Tenant Calibrator P85"]:::code -.->|"thresholds"| RB
+  RB --> SV{"11 · Severity Router"}:::cond
+  SV --> ANY{"12 · Any Conflicts?"}:::cond
+  ANY -- No --> IA18
+  ANY -- Yes --> LP["13 · Loop per Conflict 🔁"]:::loop
+  LP --> RES["13a · Reserve Slot Idempotent"]:::code
+  RES --> TB{"13b · Token Bucket OK?"}:::guard
+  TB -- No --> TRIP["13c · Auto-Mode Alert 🚨"]:::guard
+  TRIP --> HH
+  TB -- Yes --> API["14 · Post Fix Retry×3"]:::tool
+  API --> LOG["15 · Log conflict_log"]:::mem
+  LOG --> HIGH{"16 · Rs.50K+?"}:::cond
+  HIGH -- Yes --> HH["17 · Telegram+SMS Handoff 📱"]:::human
+  HH --> BU["17a · Bandit Update ACK"]:::mem
+  BU -.->|"α,β update"| BP
+  HIGH -- No --> IA18
+
+  IA18["18 · 7d History"]:::kr --> CSG{"18a · Cold-Start Gate"}:::cond
+  CSG -- No --> PC["18b · Peer Cohort Bayesian 🧮"]:::kr
+  PC --> PT
+  CSG -- Yes --> PT["19 · Few-Shot Prompt 📋"]:::prompt
+  PT --> IL["20 · Insight Agent Haiku 🤖"]:::llm
+  IL --> CF{"21 · Confidence >= threshold?"}:::cond
+  FB["21a · Feedback Log"]:::mem -.->|"labels"| CAL2
+  CAL2["21b · Isotonic Calibrator 📉"]:::code -.->|"threshold"| CF
+  CF -- No --> DEEP["22 · 30d Deep History"]:::kr
+  DEEP --> IL
+  CF -- Yes --> FV["23 · Regex Fact-Verify"]:::guard
+  FV --> LJ["23a · LLM-as-Judge ⚖️"]:::guard
+  LJ --> DJ["24 · Dashboard JSON"]:::out
+  DJ -.->|"user feedback"| FB
+
+  WT["25 · Weekly Timer Sun 6am ⏰"]:::input --> AG["26 · 7d Aggregate"]:::kr
+  AG --> AR1["27 · Analyst Run A seed42"]:::llm
+  AG --> AR2["27a · Analyst Run B seed17"]:::llm
+  AR1 --> SC["27b · Self-Consistency ∩"]:::code
+  AR2 --> SC
+  SC --> AFV["27c · Aggregate Fact-Verify ✅"]:::guard
+  AFV --> EM["28 · Exec Email + Pattern Feed 📧"]:::out
+
+  MT["31 · Hourly Timer ⏱"]:::input --> SM["32 · System Metrics KR"]:::kr
+  SM --> DD["33 · Drift Detector KS+CUSUM"]:::code
+  DD --> DX{"drift?"}:::cond
+  DX -- No --> IDLE["idle ✓"]:::out
+  DX -- Yes --> MA["34 · Mirror Agent Sonnet 🪞"]:::llm
+  MA --> NOT["35 · Owner Notify + Self-Heal"]:::out
+
+  EB["30 · Error Budget Monitor 🛡️"]:::guard -.->|"feature freeze"| RB
+</pre>
+</div>
+
+<!-- ══════════ COGNIZANT SUPERSET GUIDE ══════════ -->
+<div class="superset-guide">
+  <h3>⚡ Cognizant Superset — 45-min Replication Checklist</h3>
+  <div class="guide-steps">
+    <div class="guide-step"><div class="step-num">STEP 01</div><div class="step-txt">Create 5 Agent flows: Sync · Conflict · Insight · Analyst · Mirror</div></div>
+    <div class="guide-step"><div class="step-num">STEP 02</div><div class="step-txt">Stage 0: Add Timer Input → KR → Code → Condition → Output (early exit)</div></div>
+    <div class="guide-step"><div class="step-num">STEP 03</div><div class="step-txt">Stage 2: Add Memory nodes (Bandit Store + Feedback Log) as dashed connections</div></div>
+    <div class="guide-step"><div class="step-num">STEP 04</div><div class="step-txt">Stage 3: Add Cold-Start Gate condition routing to Peer Cohort KR node</div></div>
+    <div class="guide-step"><div class="step-num">STEP 05</div><div class="step-txt">Stage 4: Wire dual Analyst LLM runs → Self-Consistency Code → Guardrail</div></div>
+    <div class="guide-step"><div class="step-num">STEP 06</div><div class="step-txt">Stage 5: Mirror Agent — connect Error Budget Monitor with dashed line to Stage 2</div></div>
+    <div class="guide-step"><div class="step-num">STEP 07</div><div class="step-txt">Label every node with exact ID (e.g. "10a · Bandit Store") — judges check this</div></div>
+    <div class="guide-step"><div class="step-num">STEP 08</div><div class="step-txt">Add all config values inline on each node as per this canvas</div></div>
+  </div>
+</div>
+
+<!-- ══════════ STAGE 0 ══════════ -->
+<h2><span class="stage-id">S0</span> Stage 0 · Trigger &amp; Early Exit <span class="node-count">5</span> <span class="count">eliminates ~70% of pipeline runs on quiet ticks</span></h2>
+<div class="stage-block">
+<div class="stage-head">
+  <h3><span class="stage-num">STAGE 0</span>Trigger &amp; Early Exit — Hash-Based Gate</h3>
+  <span class="stage-meta">60s · 5 nodes · ~70% API cost reduction</span>
+</div>
+<div class="grid">
+  <div class="node input">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 1</span>
+        <span class="node-nm">Timer Trigger</span>
+      </div>
+      <span class="type-tag">Input</span>
+    </div>
+    <div class="desc">Fires the pipeline every 60 seconds, 24×7. The heartbeat of the entire system.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Interval:</span><span class="cfg-val">60s</span></div>
+      <div class="cfg-row"><span class="cfg-key">TZ:</span><span class="cfg-val">Asia/Kolkata</span></div>
+      <div class="cfg-row"><span class="cfg-key">Out:</span><span class="cfg-val">{tick_id, ts_utc, tenant_id}</span></div>
+    </div>
+  </div>
+  <div class="node kr">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 2</span>
+        <span class="node-nm">Fetch Channel Snapshot</span>
+      </div>
+      <span class="type-tag">Knowledge Retrieval</span>
+    </div>
+    <div class="desc">Parallel fan-out pull from Shopify REST, Amazon SP-API, and POS CSV on S3.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Timeout:</span><span class="cfg-val">8s per source</span></div>
+      <div class="cfg-row"><span class="cfg-key">Fan-out:</span><span class="cfg-val">parallel (3 threads)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Sources:</span><span class="cfg-val">Shopify · Amazon · POS S3</span></div>
+      <div class="cfg-row"><span class="cfg-key">Out:</span><span class="cfg-val">{shopify:[], amazon:[], pos:[]}</span></div>
+    </div>
+  </div>
+  <div class="node code">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 3</span>
+        <span class="node-nm">Snapshot Hash Check<span class="new-tag">v2</span></span>
+      </div>
+      <span class="type-tag">Custom Code</span>
+    </div>
+    <div class="desc">MD5-hashes the snapshot, compares with Redis-stored previous hash. Kills 70% of runs.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Hash:</span><span class="cfg-val">MD5(json.dumps(snapshot, sort_keys=True))</span></div>
+      <div class="cfg-row"><span class="cfg-key">Store:</span><span class="cfg-val">Redis SETEX 180s</span></div>
+      <div class="cfg-row"><span class="cfg-key">Key:</span><span class="cfg-val">hash:{tenant_id}:last</span></div>
+      <div class="cfg-row"><span class="cfg-key">Out:</span><span class="cfg-val">{changed: bool, hash: str}</span></div>
+    </div>
+  </div>
+  <div class="node cond">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 4</span>
+        <span class="node-nm">Changed Since Last Run?</span>
+      </div>
+      <span class="type-tag">Condition</span>
+    </div>
+    <div class="desc">YES → Stage 1 (Sync Agent). NO → Node 5 (early exit). Binary gate.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Expr:</span><span class="cfg-val">$.changed == true</span></div>
+      <div class="cfg-row"><span class="cfg-key">True branch:</span><span class="cfg-val">→ Node 6</span></div>
+      <div class="cfg-row"><span class="cfg-key">False branch:</span><span class="cfg-val">→ Node 5</span></div>
+    </div>
+  </div>
+  <div class="node out">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 5</span>
+        <span class="node-nm">Quiet Tick Ack</span>
+      </div>
+      <span class="type-tag">Output</span>
+    </div>
+    <div class="desc">Writes a "skipped" metric row for dashboard observability. Terminal node on no-change path.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Table:</span><span class="cfg-val">tick_log</span></div>
+      <div class="cfg-row"><span class="cfg-key">Out:</span><span class="cfg-val">{tick_id, status:"skipped", reason:"no_change"}</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ STAGE 1 ══════════ -->
+<h2><span class="stage-id">S1</span> Stage 1 · Sync Agent <span class="node-count">4</span> <span class="count">harmonizes 3 channel schemas into one canonical record</span></h2>
+<div class="stage-block">
+<div class="stage-head">
+  <h3><span class="stage-num">STAGE 1</span>Sync Agent — Schema Harmonization</h3>
+  <span class="stage-meta">on-change · 4 nodes · deterministic work stays deterministic</span>
+</div>
+<div class="grid">
+  <div class="node code">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 6</span>
+        <span class="node-nm">Normalize Schema</span>
+      </div>
+      <span class="type-tag">Custom Code</span>
+    </div>
+    <div class="desc">Flattens vendor-specific field names before LLM — deterministic, no token cost.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Map:</span><span class="cfg-val">shopify/amazon/pos → canonical</span></div>
+      <div class="cfg-row"><span class="cfg-key">Rules:</span><span class="cfg-val">variant_sku→sku · inventory_qty→qty</span></div>
+      <div class="cfg-row"><span class="cfg-key">Out:</span><span class="cfg-val">[{sku, qty, price, source, ts}]</span></div>
+    </div>
+  </div>
+  <div class="node kr">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 7</span>
+        <span class="node-nm">SKU Master Lookup</span>
+      </div>
+      <span class="type-tag">Knowledge Retrieval</span>
+    </div>
+    <div class="desc">Pulls canonical SKU aliases from Postgres for grounding context before LLM call.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">SQL:</span><span class="cfg-val">SELECT canonical_sku, aliases FROM sku_master WHERE tenant_id=:t</span></div>
+      <div class="cfg-row"><span class="cfg-key">Cache:</span><span class="cfg-val">Redis 300s</span></div>
+    </div>
+  </div>
+  <div class="node llm">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 8</span>
+        <span class="node-nm">Sync Agent LLM</span>
+      </div>
+      <span class="type-tag">LLM Step</span>
+    </div>
+    <div class="desc">Resolves fuzzy SKU aliases to canonical IDs (RICE-5KG-V1 → RICE-5KG). Only call that's non-deterministic here.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Model:</span><span class="cfg-val">Claude Haiku</span></div>
+      <div class="cfg-row"><span class="cfg-key">Temp:</span><span class="cfg-val">0 (deterministic)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Mode:</span><span class="cfg-val">JSON mode</span></div>
+      <div class="cfg-row"><span class="cfg-key">System:</span><span class="cfg-val">"You are a SKU normalization agent..."</span></div>
+      <div class="cfg-row"><span class="cfg-key">Max tokens:</span><span class="cfg-val">256</span></div>
+    </div>
+  </div>
+  <div class="node out">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 9</span>
+        <span class="node-nm">Canonical Inventory JSON</span>
+      </div>
+      <span class="type-tag">Output Formatter</span>
+    </div>
+    <div class="desc">Emits the single canonical record Stage 2 consumes. Dashed out → Conflict Agent.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Schema:</span><span class="cfg-val">{sku, name, channels:{shopify, amazon, pos}}</span></div>
+      <div class="cfg-row"><span class="cfg-key">Downstream:</span><span class="cfg-val">→ Node 10 (Rule Detect)</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ STAGE 2 ══════════ -->
+<h2><span class="stage-id">S2</span> Stage 2 · Conflict Agent <span class="node-count">14</span> <span class="count">detect · fix · escalate · learn · self-tune</span></h2>
+<div class="stage-block">
+<div class="stage-head">
+  <h3><span class="stage-num">STAGE 2</span>Conflict Agent — Bandit Self-Tuning + Idempotency + Rate Limit</h3>
+  <span class="stage-meta">on-change · 14 nodes · most complex stage</span>
+</div>
+<div class="grid">
+  <div class="node code">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 10</span>
+        <span class="node-nm">Rule-Based Conflict Detect</span>
+      </div>
+      <span class="type-tag">Custom Code</span>
+    </div>
+    <div class="desc">Checks canonical JSON against conflict rules (price mismatch, oversell, stale listing). Thompson-sampled weights from Bandit Store.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Rules:</span><span class="cfg-val">price_mismatch · oversell · stale · qty_drift</span></div>
+      <div class="cfg-row"><span class="cfg-key">Weights:</span><span class="cfg-val">from 10a (Bandit Store) per-tenant</span></div>
+      <div class="cfg-row"><span class="cfg-key">Thresholds:</span><span class="cfg-val">from 10b (Tenant Calibrator) P85</span></div>
+      <div class="cfg-row"><span class="cfg-key">Out:</span><span class="cfg-val">[{sku, rule, sev, est_loss_inr}]</span></div>
+    </div>
+  </div>
+  <div class="node mem">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 10a</span>
+        <span class="node-nm">Bandit Store<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Memory (dashed)</span>
+    </div>
+    <div class="desc">Beta(α,β) per rule-tenant pair. Thompson samples a weight each run. Enables self-tuning.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Table:</span><span class="cfg-val">rule_posteriors(tenant_id, rule_id, alpha, beta)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Sample:</span><span class="cfg-val">np.random.beta(α+1, β+1)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Connection:</span><span class="cfg-val">dashed → Node 10</span></div>
+      <div class="cfg-row"><span class="cfg-key">Updated by:</span><span class="cfg-val">Node 17a (Bandit Update)</span></div>
+    </div>
+  </div>
+  <div class="node code">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 10b</span>
+        <span class="node-nm">Tenant Calibrator<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Custom Code (nightly)</span>
+    </div>
+    <div class="desc">Computes P85 of tenant's own 30-day legitimate price moves. Tenant-specific thresholds, not industry averages.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">SQL:</span><span class="cfg-val">percentile_cont(0.85) WITHIN GROUP (ORDER BY delta)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Schedule:</span><span class="cfg-val">nightly 02:00 IST</span></div>
+      <div class="cfg-row"><span class="cfg-key">Writes:</span><span class="cfg-val">tenant_thresholds table</span></div>
+    </div>
+  </div>
+  <div class="node cond">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 11</span>
+        <span class="node-nm">Severity Router</span>
+      </div>
+      <span class="type-tag">Classifier / Router</span>
+    </div>
+    <div class="desc">Tags each conflict LOW / MED / HIGH by estimated monetary impact. Routes to appropriate handling path.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">HIGH:</span><span class="cfg-val">est_loss > ₹10,000</span></div>
+      <div class="cfg-row"><span class="cfg-key">MED:</span><span class="cfg-val">₹1,000 – ₹10,000</span></div>
+      <div class="cfg-row"><span class="cfg-key">LOW:</span><span class="cfg-val">< ₹1,000</span></div>
+    </div>
+  </div>
+  <div class="node cond">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 12</span>
+        <span class="node-nm">Any Conflicts Found?</span>
+      </div>
+      <span class="type-tag">Condition</span>
+    </div>
+    <div class="desc">Short-circuits to Insight Agent when conflict list is empty. Saves all downstream processing.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Expr:</span><span class="cfg-val">len($.conflicts) > 0</span></div>
+      <div class="cfg-row"><span class="cfg-key">No path:</span><span class="cfg-val">→ Node 18 (Insight)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Yes path:</span><span class="cfg-val">→ Node 13 (Loop)</span></div>
+    </div>
+  </div>
+  <div class="node loop">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 13</span>
+        <span class="node-nm">Loop per Conflict<span class="new-tag">v2</span></span>
+      </div>
+      <span class="type-tag">Loop</span>
+    </div>
+    <div class="desc">Processes each conflict independently — a bad row cannot poison the batch. Parallelism=5.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Mode:</span><span class="cfg-val">ForEach($.conflicts)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Parallelism:</span><span class="cfg-val">5</span></div>
+      <div class="cfg-row"><span class="cfg-key">On error:</span><span class="cfg-val">continue (isolate failures)</span></div>
+    </div>
+  </div>
+  <div class="node code">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 13a</span>
+        <span class="node-nm">Reserve Action Slot<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Custom Code</span>
+    </div>
+    <div class="desc">UNIQUE constraint on action_log enforces exactly-once at the DB level. Idempotency key prevents double-fixes.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Key:</span><span class="cfg-val">md5(tenant|sku|type|channel|price|date)</span></div>
+      <div class="cfg-row"><span class="cfg-key">DB:</span><span class="cfg-val">INSERT OR IGNORE INTO action_log</span></div>
+      <div class="cfg-row"><span class="cfg-key">Duplicate:</span><span class="cfg-val">→ skip branch (no-op)</span></div>
+    </div>
+  </div>
+  <div class="node guard">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 13b</span>
+        <span class="node-nm">Token Bucket Check<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Guardrail</span>
+    </div>
+    <div class="desc">Per-tenant Redis leaky bucket: 50 tokens, refills 10/min. Empty = auto-mode OFF for safety.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Algo:</span><span class="cfg-val">Leaky Bucket (RFC 2698)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Capacity:</span><span class="cfg-val">50 tokens</span></div>
+      <div class="cfg-row"><span class="cfg-key">Refill:</span><span class="cfg-val">10 tokens/min</span></div>
+      <div class="cfg-row"><span class="cfg-key">Empty →</span><span class="cfg-val">route to Node 17 (human)</span></div>
+    </div>
+  </div>
+  <div class="node guard">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 13c</span>
+        <span class="node-nm">Auto-Mode Tripped Alert<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Guardrail</span>
+    </div>
+    <div class="desc">Pages owner, posts dashboard banner, logs incident. Fires when rate limit exhausted.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Channels:</span><span class="cfg-val">Telegram + email + dashboard banner</span></div>
+      <div class="cfg-row"><span class="cfg-key">Next:</span><span class="cfg-val">→ Node 17 (Human Handoff)</span></div>
+    </div>
+  </div>
+  <div class="node tool">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 14</span>
+        <span class="node-nm">Post Resolution API</span>
+      </div>
+      <span class="type-tag">Tool</span>
+    </div>
+    <div class="desc">Calls Shopify PUT /variants or Amazon Feed API with idempotency key. Exponential backoff.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Shopify:</span><span class="cfg-val">PUT /admin/api/variants/{id}.json</span></div>
+      <div class="cfg-row"><span class="cfg-key">Amazon:</span><span class="cfg-val">POST /feeds (SubmitFeed)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Retry:</span><span class="cfg-val">exp backoff ×3, jitter 200ms</span></div>
+      <div class="cfg-row"><span class="cfg-key">Header:</span><span class="cfg-val">X-Idempotency-Key: {action_id}</span></div>
+    </div>
+  </div>
+  <div class="node mem">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 15</span>
+        <span class="node-nm">Log to conflict_log</span>
+      </div>
+      <span class="type-tag">Memory</span>
+    </div>
+    <div class="desc">Immutable event row — Stage 3's retrieval source. Append-only, never updated.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Cols:</span><span class="cfg-val">ts, tenant, sku, type, sev, delta, resolved_by</span></div>
+      <div class="cfg-row"><span class="cfg-key">Mode:</span><span class="cfg-val">INSERT only (immutable log)</span></div>
+    </div>
+  </div>
+  <div class="node cond">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 16</span>
+        <span class="node-nm">Amount > ₹50K?</span>
+      </div>
+      <span class="type-tag">Condition</span>
+    </div>
+    <div class="desc">Human-in-the-loop gate for financially material fixes. Based on 3.5× avg daily SME revenue.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Threshold:</span><span class="cfg-val">est_loss_inr > 50000</span></div>
+      <div class="cfg-row"><span class="cfg-key">Basis:</span><span class="cfg-val">3.5× avg daily SME revenue</span></div>
+      <div class="cfg-row"><span class="cfg-key">Yes →</span><span class="cfg-val">Node 17 · No → Node 18</span></div>
+    </div>
+  </div>
+  <div class="node human">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 17</span>
+        <span class="node-nm">Telegram + SMS Handoff<span class="new-tag">v2</span></span>
+      </div>
+      <span class="type-tag">Human Handoff</span>
+    </div>
+    <div class="desc">Telegram first; 5-min no-ACK → MSG91 SMS fallback. Tier-2/3 India reality: SMS wins when app fails.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Primary:</span><span class="cfg-val">Telegram Bot API</span></div>
+      <div class="cfg-row"><span class="cfg-key">Fallback:</span><span class="cfg-val">MSG91 SMS (5min timeout)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Actions:</span><span class="cfg-val">APPROVE · SKIP</span></div>
+      <div class="cfg-row"><span class="cfg-key">ACK →</span><span class="cfg-val">Node 17a (Bandit Update)</span></div>
+    </div>
+  </div>
+  <div class="node mem">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 17a</span>
+        <span class="node-nm">Bandit Update on ACK<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Memory</span>
+    </div>
+    <div class="desc">On APPROVE → α+=1 (rule validated). On SKIP → β+=1 (rule over-fired). Closes the learning loop.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">APPROVE:</span><span class="cfg-val">UPDATE rule_posteriors SET alpha=alpha+1</span></div>
+      <div class="cfg-row"><span class="cfg-key">SKIP:</span><span class="cfg-val">UPDATE rule_posteriors SET beta=beta+1</span></div>
+      <div class="cfg-row"><span class="cfg-key">Feeds:</span><span class="cfg-val">dashed → Node 10a (Bandit Store)</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ STAGE 3 ══════════ -->
+<h2><span class="stage-id">S3</span> Stage 3 · Insight Agent <span class="node-count">12</span> <span class="count">cold-start ready · calibrated threshold · dual-layer fact-verify</span></h2>
+<div class="stage-block">
+<div class="stage-head">
+  <h3><span class="stage-num">STAGE 3</span>Insight Agent — Explainable Daily Bullet</h3>
+  <span class="stage-meta">on-change · 12 nodes · most sophisticated ML patterns</span>
+</div>
+<div class="grid">
+  <div class="node kr">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 18</span>
+        <span class="node-nm">7-Day Conflict History</span>
+      </div>
+      <span class="type-tag">Knowledge Retrieval</span>
+    </div>
+    <div class="desc">Rolling week of conflict_log — grounding context for the LLM. Anchors to real events.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">SQL:</span><span class="cfg-val">WHERE ts > NOW() - INTERVAL '7 days' AND tenant=:t</span></div>
+      <div class="cfg-row"><span class="cfg-key">Order:</span><span class="cfg-val">ts DESC · LIMIT 50</span></div>
+    </div>
+  </div>
+  <div class="node cond">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 18a</span>
+        <span class="node-nm">Cold-Start Gate<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Condition</span>
+    </div>
+    <div class="desc">Routes new tenants (&lt;7 days data) to peer cohort retrieval instead of thin own-data. Critical for Day-1 value.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Expr:</span><span class="cfg-val">history_days >= 7</span></div>
+      <div class="cfg-row"><span class="cfg-key">True (>=7d):</span><span class="cfg-val">→ Node 19 (Few-Shot Prompt)</span></div>
+      <div class="cfg-row"><span class="cfg-key">False (<7d):</span><span class="cfg-val">→ Node 18b (Peer Cohort)</span></div>
+    </div>
+  </div>
+  <div class="node kr">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 18b</span>
+        <span class="node-nm">Peer Cohort (Bayesian)<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Knowledge Retrieval</span>
+    </div>
+    <div class="desc">Anonymized same-vertical cohort data. Bayesian shrinkage blends tenant + cohort by data maturity.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Blend λ:</span><span class="cfg-val">days_of_data / 7</span></div>
+      <div class="cfg-row"><span class="cfg-key">Formula:</span><span class="cfg-val">λ·tenant_data + (1-λ)·cohort_data</span></div>
+      <div class="cfg-row"><span class="cfg-key">Prompt flag:</span><span class="cfg-val">early_stage=true</span></div>
+    </div>
+  </div>
+  <div class="node prompt">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 19</span>
+        <span class="node-nm">Few-Shot System Prompt<span class="new-tag">v2</span></span>
+      </div>
+      <span class="type-tag">Prompt Template</span>
+    </div>
+    <div class="desc">2 worked examples (pricing drift, oversell) locking JSON shape. Prevents schema drift across runs.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Examples:</span><span class="cfg-val">pricing_drift · oversell (2 shots)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Out schema:</span><span class="cfg-val">{"bullet":"•...","confidence":0-1}</span></div>
+      <div class="cfg-row"><span class="cfg-key">Max bullet:</span><span class="cfg-val">25 words, starts with "•"</span></div>
+    </div>
+  </div>
+  <div class="node llm">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 20</span>
+        <span class="node-nm">Insight Agent LLM</span>
+      </div>
+      <span class="type-tag">LLM Step</span>
+    </div>
+    <div class="desc">Produces the single most-visible artifact — the daily business bullet. Low temp for consistency.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Model:</span><span class="cfg-val">Claude Haiku</span></div>
+      <div class="cfg-row"><span class="cfg-key">Temp:</span><span class="cfg-val">0.3</span></div>
+      <div class="cfg-row"><span class="cfg-key">Max tokens:</span><span class="cfg-val">120</span></div>
+      <div class="cfg-row"><span class="cfg-key">Out:</span><span class="cfg-val">{bullet: str, confidence: float}</span></div>
+    </div>
+  </div>
+  <div class="node cond">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 21</span>
+        <span class="node-nm">Confidence >= threshold?<span class="new-tag">v2</span></span>
+      </div>
+      <span class="type-tag">Condition</span>
+    </div>
+    <div class="desc">Threshold is per-tenant (isotonic calibration), NOT fixed 0.7. Adapts to each merchant's signal quality.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Source:</span><span class="cfg-val">tenant_thresholds.confidence_min</span></div>
+      <div class="cfg-row"><span class="cfg-key">Cold start:</span><span class="cfg-val">0.7 (default)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Yes →</span><span class="cfg-val">Node 23 · No → Node 22</span></div>
+    </div>
+  </div>
+  <div class="node mem">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 21a</span>
+        <span class="node-nm">Bullet Feedback Log<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Memory (dashed)</span>
+    </div>
+    <div class="desc">Logs every (confidence, owner_accepted) pair. The training data for the isotonic calibrator.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Cols:</span><span class="cfg-val">ts, tenant, bullet_id, confidence, accepted (bool)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Feeds:</span><span class="cfg-val">dashed → Node 21b (Isotonic Calibrator)</span></div>
+    </div>
+  </div>
+  <div class="node code">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 21b</span>
+        <span class="node-nm">Isotonic Calibrator<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Custom Code (nightly)</span>
+    </div>
+    <div class="desc">sklearn.isotonic fit on feedback log. Threshold = lowest raw confidence where precision ≥ 0.9.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Lib:</span><span class="cfg-val">sklearn.isotonic.IsotonicRegression</span></div>
+      <div class="cfg-row"><span class="cfg-key">Min samples:</span><span class="cfg-val">200 before fitting</span></div>
+      <div class="cfg-row"><span class="cfg-key">Cold start:</span><span class="cfg-val">0.7 default</span></div>
+      <div class="cfg-row"><span class="cfg-key">Writes:</span><span class="cfg-val">→ tenant_thresholds.confidence_min</span></div>
+    </div>
+  </div>
+  <div class="node kr">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 22</span>
+        <span class="node-nm">30-Day Deep History<span class="new-tag">v2</span></span>
+      </div>
+      <span class="type-tag">Knowledge Retrieval</span>
+    </div>
+    <div class="desc">Low-confidence fallback. Loops back to Node 20 once with richer context. Cap of 1 re-query enforced.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">SQL:</span><span class="cfg-val">WHERE ts > NOW() - INTERVAL '30 days'</span></div>
+      <div class="cfg-row"><span class="cfg-key">Max re-queries:</span><span class="cfg-val">1 per bullet</span></div>
+      <div class="cfg-row"><span class="cfg-key">Loop flag:</span><span class="cfg-val">deep_retry=true (stops infinite loop)</span></div>
+    </div>
+  </div>
+  <div class="node guard">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 23</span>
+        <span class="node-nm">Regex Fact-Verify<span class="new-tag">v2</span></span>
+      </div>
+      <span class="type-tag">Guardrail</span>
+    </div>
+    <div class="desc">Layer 1 of 2: catches fabricated ₹ values, INR formats, K-suffix numbers, case-insensitive SKU check.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Regex:</span><span class="cfg-val">(?:Rs\.?|₹|INR)\s?([\d,]+(?:\.\d+)?)[Kk]?</span></div>
+      <div class="cfg-row"><span class="cfg-key">SKU check:</span><span class="cfg-val">re.search(sku, bullet, re.IGNORECASE)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Pass →</span><span class="cfg-val">Node 23a (LLM Judge)</span></div>
+    </div>
+  </div>
+  <div class="node guard">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 23a</span>
+        <span class="node-nm">LLM-as-Judge Verifier<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Guardrail</span>
+    </div>
+    <div class="desc">Layer 2 of 2: second Haiku call extracts all claims; set-membership check. Independent verification (Zheng et al. 2023).</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Pattern:</span><span class="cfg-val">LLM-as-Judge (Zheng et al. 2023)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Model:</span><span class="cfg-val">Claude Haiku (separate call)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Check:</span><span class="cfg-val">claims ⊆ conflict_log facts</span></div>
+      <div class="cfg-row"><span class="cfg-key">Cost:</span><span class="cfg-val">~₹0.02/bullet</span></div>
+    </div>
+  </div>
+  <div class="node out">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 24</span>
+        <span class="node-nm">Dashboard JSON</span>
+      </div>
+      <span class="type-tag">Output</span>
+    </div>
+    <div class="desc">Payload React dashboard polls every 5s via Axios. Closes the feedback loop via dashed edge back to 21a.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Schema:</span><span class="cfg-val">{ts, bullet, confidence, conflicts_today, revenue_saved_inr}</span></div>
+      <div class="cfg-row"><span class="cfg-key">Poll:</span><span class="cfg-val">React Axios every 5s</span></div>
+      <div class="cfg-row"><span class="cfg-key">Feedback:</span><span class="cfg-val">dashed → Node 21a</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ STAGE 4 ══════════ -->
+<h2><span class="stage-id">S4</span> Stage 4 · Analyst Agent <span class="node-count">7</span> <span class="count">weekly · dual-seed self-consistency + aggregate fact-verify</span></h2>
+<div class="stage-block">
+<div class="stage-head">
+  <h3><span class="stage-num">STAGE 4</span>Analyst Agent — Executive Pattern Memo</h3>
+  <span class="stage-meta">weekly Sun 06:00 IST · 7 nodes · dual-seed self-consistency (Wang et al. 2022)</span>
+</div>
+<div class="grid">
+  <div class="node input">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 25</span>
+        <span class="node-nm">Weekly Timer</span>
+      </div>
+      <span class="type-tag">Input</span>
+    </div>
+    <div class="desc">Sunday 06:00 IST cron. Independent pipeline from the 60s tick.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Cron:</span><span class="cfg-val">0 6 * * 0</span></div>
+      <div class="cfg-row"><span class="cfg-key">TZ:</span><span class="cfg-val">Asia/Kolkata</span></div>
+    </div>
+  </div>
+  <div class="node kr">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 26</span>
+        <span class="node-nm">7-Day Aggregate</span>
+      </div>
+      <span class="type-tag">Knowledge Retrieval</span>
+    </div>
+    <div class="desc">Aggregated counters, not raw rows — keeps context small for Sonnet. Top 20 SKUs by drift.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">SQL:</span><span class="cfg-val">GROUP BY sku, type · ORDER BY rs_drift DESC · LIMIT 20</span></div>
+      <div class="cfg-row"><span class="cfg-key">Fans out:</span><span class="cfg-val">→ Node 27 AND Node 27a (parallel)</span></div>
+    </div>
+  </div>
+  <div class="node llm">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 27</span>
+        <span class="node-nm">Analyst Run A</span>
+      </div>
+      <span class="type-tag">LLM Step</span>
+    </div>
+    <div class="desc">Claude Sonnet, seed 42 — weekly 5-bullet executive pattern memo. First of dual runs.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Model:</span><span class="cfg-val">Claude Sonnet</span></div>
+      <div class="cfg-row"><span class="cfg-key">Temp:</span><span class="cfg-val">0.4 · Seed: 42</span></div>
+      <div class="cfg-row"><span class="cfg-key">Out:</span><span class="cfg-val">[{bullet, claim_set}] (5 items)</span></div>
+    </div>
+  </div>
+  <div class="node llm">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 27a</span>
+        <span class="node-nm">Analyst Run B<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">LLM Step</span>
+    </div>
+    <div class="desc">Same prompt, seed 17. Used for self-consistency check. Kills one-off hallucinations (Wang et al. 2022).</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Model:</span><span class="cfg-val">Claude Sonnet</span></div>
+      <div class="cfg-row"><span class="cfg-key">Temp:</span><span class="cfg-val">0.4 · Seed: 17</span></div>
+      <div class="cfg-row"><span class="cfg-key">Pattern:</span><span class="cfg-val">Wang et al. 2022 Self-Consistency</span></div>
+    </div>
+  </div>
+  <div class="node code">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 27b</span>
+        <span class="node-nm">Self-Consistency Intersect<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Custom Code</span>
+    </div>
+    <div class="desc">Publishes ONLY claims appearing in BOTH runs. Set intersection kills one-off hallucinations cold.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Op:</span><span class="cfg-val">claims_A ∩ claims_B</span></div>
+      <div class="cfg-row"><span class="cfg-key">Match:</span><span class="cfg-val">fuzzy (SequenceMatcher ratio > 0.85)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Discard:</span><span class="cfg-val">any claim not in both runs</span></div>
+    </div>
+  </div>
+  <div class="node guard">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 27c</span>
+        <span class="node-nm">Aggregate Fact-Verify<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Guardrail</span>
+    </div>
+    <div class="desc">Same regex + LLM-as-judge pattern as nodes 23/23a, applied to 7-day aggregate data.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Rejects:</span><span class="cfg-val">bullets with unsourced ₹ or SKUs</span></div>
+      <div class="cfg-row"><span class="cfg-key">Source:</span><span class="cfg-val">Node 26 (7d aggregate)</span></div>
+    </div>
+  </div>
+  <div class="node out">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 28</span>
+        <span class="node-nm">Executive Email + Pattern Feed</span>
+      </div>
+      <span class="type-tag">Output</span>
+    </div>
+    <div class="desc">SendGrid email to merchant + dashboard Pattern Feed widget. The weekly touchpoint with owner.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Email:</span><span class="cfg-val">SendGrid API · template: weekly_digest</span></div>
+      <div class="cfg-row"><span class="cfg-key">DB:</span><span class="cfg-val">INSERT INTO pattern_feed table</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ STAGE 5 MIRROR ══════════ -->
+<h2><span class="stage-id">S5★</span> Stage 5 · Mirror Agent <span class="node-count">6</span> <span class="count">hourly self-monitoring · SRE · the 100th-point layer</span></h2>
+<div class="stage-block mirror">
+<div class="stage-head">
+  <h3><span class="stage-num" style="background:var(--gold)">STAGE 5 ★</span>Mirror Agent — No Competitor Ships This</h3>
+  <span class="stage-meta">hourly + continuous · 6 nodes · watches system signals, not business data</span>
+</div>
+<div class="grid">
+  <div class="node input">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 31</span>
+        <span class="node-nm">Hourly Timer<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Input</span>
+    </div>
+    <div class="desc">The Mirror's heartbeat. Separate from the 60s main tick. Independent failure domain.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Cron:</span><span class="cfg-val">0 * * * *</span></div>
+      <div class="cfg-row"><span class="cfg-key">TZ:</span><span class="cfg-val">Asia/Kolkata</span></div>
+      <div class="cfg-row"><span class="cfg-key">Isolated from:</span><span class="cfg-val">Node 1 (independent)</span></div>
+    </div>
+  </div>
+  <div class="node kr">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 32</span>
+        <span class="node-nm">System Metrics KR<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Knowledge Retrieval</span>
+    </div>
+    <div class="desc">Pulls confidence distribution, bucket trip count, rejection rate, contradictions. System-only — no business data.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Metrics:</span><span class="cfg-val">confidence_dist · bucket_trips · rejection_rate · contradictions</span></div>
+      <div class="cfg-row"><span class="cfg-key">Source:</span><span class="cfg-val">system_metrics table (NOT conflict_log)</span></div>
+    </div>
+  </div>
+  <div class="node code">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 33</span>
+        <span class="node-nm">Drift Detector KS+CUSUM<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Custom Code</span>
+    </div>
+    <div class="desc">Kolmogorov-Smirnov 2-sample test + CUSUM + EWMA. Any of 4 signals firing → drift=true.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Methods:</span><span class="cfg-val">KS-test · CUSUM · EWMA · threshold breach</span></div>
+      <div class="cfg-row"><span class="cfg-key">α:</span><span class="cfg-val">0.05 (significance level)</span></div>
+      <div class="cfg-row"><span class="cfg-key">Trigger:</span><span class="cfg-val">ANY 1 of 4 signals → drift=true</span></div>
+    </div>
+  </div>
+  <div class="node llm">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 34</span>
+        <span class="node-nm">Mirror Agent LLM<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">LLM Step</span>
+    </div>
+    <div class="desc">Sonnet introspects the system metrics and proposes ONE concrete self-heal action. Constrained output.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Model:</span><span class="cfg-val">Claude Sonnet</span></div>
+      <div class="cfg-row"><span class="cfg-key">Constraint:</span><span class="cfg-val">Must propose exactly 1 action</span></div>
+      <div class="cfg-row"><span class="cfg-key">Out:</span><span class="cfg-val">{sentence, proposed_action, urgency: low|med|high}</span></div>
+    </div>
+  </div>
+  <div class="node out">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 35</span>
+        <span class="node-nm">Owner Notification + Self-Heal<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Output</span>
+    </div>
+    <div class="desc">Sends the introspection + one-click self-heal button to owner via Telegram and dashboard card.</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">Channels:</span><span class="cfg-val">Telegram + dashboard card</span></div>
+      <div class="cfg-row"><span class="cfg-key">Action:</span><span class="cfg-val">One-click self-heal webhook</span></div>
+    </div>
+  </div>
+  <div class="node guard">
+    <div class="node-hd">
+      <div class="node-left">
+        <span class="node-num">NODE 30</span>
+        <span class="node-nm">Error Budget Monitor<span class="new-tag">v3</span></span>
+      </div>
+      <span class="type-tag">Guardrail (continuous)</span>
+    </div>
+    <div class="desc">Runs continuously; when SLO budget exhausted → automatic feature freeze. Dashed to Node 10 (Rule Detect).</div>
+    <div class="cfg">
+      <span class="cfg-label">CONFIG</span>
+      <div class="cfg-row"><span class="cfg-key">SLO:</span><span class="cfg-val">p50 ≤ 15s · p99 ≤ 45s · 99.5% availability</span></div>
+      <div class="cfg-row"><span class="cfg-key">Budget:</span><span class="cfg-val">3h 36m downtime/month</span></div>
+      <div class="cfg-row"><span class="cfg-key">Exhausted →</span><span class="cfg-val">dashed feature freeze → Node 10</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ CONNECTION MAP ══════════ -->
+<h2><span class="stage-id">EDGES</span> Connection Map — All 34+ Edges <span class="count">copy these exactly in Superset · dashed = memory/feedback</span></h2>
+<div class="conn-table-wrap">
+<table class="conn-table">
+  <tr><th>From</th><th></th><th>To</th><th>Condition</th><th>Type</th><th>Notes</th></tr>
+  <tr><td class="from-node">1 · Timer</td><td class="conn-arrow">→</td><td class="to-node">2 · Fetch Snapshot</td><td>—</td><td><span class="conn-type ct-seq">sequential</span></td><td style="color:var(--muted);font-size:11px">Always fires</td></tr>
+  <tr><td class="from-node">2 · Fetch</td><td class="conn-arrow">→</td><td class="to-node">3 · Hash Check</td><td>—</td><td><span class="conn-type ct-seq">sequential</span></td><td style="color:var(--muted);font-size:11px">Pipe full snapshot</td></tr>
+  <tr><td class="from-node">3 · Hash</td><td class="conn-arrow">→</td><td class="to-node">4 · Changed?</td><td>—</td><td><span class="conn-type ct-seq">sequential</span></td><td style="color:var(--muted);font-size:11px">Passes {changed, hash}</td></tr>
+  <tr><td class="from-node">4 · Changed?</td><td class="conn-arrow">→</td><td class="to-node">5 · Quiet Tick</td><td class="conn-cond">changed == false</td><td><span class="conn-type ct-cond">conditional</span></td><td style="color:var(--muted);font-size:11px">70% of all ticks</td></tr>
+  <tr><td class="from-node">4 · Changed?</td><td class="conn-arrow">→</td><td class="to-node">6 · Normalize</td><td class="conn-cond">changed == true</td><td><span class="conn-type ct-cond">conditional</span></td><td style="color:var(--muted);font-size:11px">30% of ticks</td></tr>
+  <tr><td class="from-node">6 · Normalize</td><td class="conn-arrow">→</td><td class="to-node">7 · SKU Master</td><td>—</td><td><span class="conn-type ct-seq">sequential</span></td><td style="color:var(--muted);font-size:11px">—</td></tr>
+  <tr><td class="from-node">7 · SKU Master</td><td class="conn-arrow">→</td><td class="to-node">8 · Sync Agent LLM</td><td>—</td><td><span class="conn-type ct-seq">sequential</span></td><td style="color:var(--muted);font-size:11px">Grounding context</td></tr>
+  <tr><td class="from-node">8 · Sync LLM</td><td class="conn-arrow">→</td><td class="to-node">9 · Canonical JSON</td><td>—</td><td><span class="conn-type ct-seq">sequential</span></td><td style="color:var(--muted);font-size:11px">—</td></tr>
+  <tr><td class="from-node">9 · Canonical</td><td class="conn-arrow">→</td><td class="to-node">10 · Rule Detect</td><td>—</td><td><span class="conn-type ct-seq">sequential</span></td><td style="color:var(--muted);font-size:11px">Main pipeline continues</td></tr>
+  <tr><td class="from-node">10a · Bandit Store</td><td class="conn-arrow">⇢</td><td class="to-node">10 · Rule Detect</td><td>weights</td><td><span class="conn-type ct-mem">memory</span></td><td style="color:var(--muted);font-size:11px">DASHED — β weights</td></tr>
+  <tr><td class="from-node">10b · Calibrator</td><td class="conn-arrow">⇢</td><td class="to-node">10 · Rule Detect</td><td>thresholds</td><td><span class="conn-type ct-mem">memory</span></td><td style="color:var(--muted);font-size:11px">DASHED — P85 thresholds</td></tr>
+  <tr><td class="from-node">10 · Rule Detect</td><td class="conn-arrow">→</td><td class="to-node">11 · Severity Router</td><td>—</td><td><span class="conn-type ct-seq">sequential</span></td><td style="color:var(--muted);font-size:11px">—</td></tr>
+  <tr><td class="from-node">11 · Severity</td><td class="conn-arrow">→</td><td class="to-node">12 · Any Conflicts?</td><td>—</td><td><span class="conn-type ct-seq">sequential</span></td><td style="color:var(--muted);font-size:11px">—</td></tr>
+  <tr><td class="from-node">12 · Conflicts?</td><td class="conn-arrow">→</td><td class="to-node">13 · Loop</td><td class="conn-cond">len > 0</td><td><span class="conn-type ct-cond">conditional</span></td><td style="color:var(--muted);font-size:11px">—</td></tr>
+  <tr><td class="from-node">12 · Conflicts?</td><td class="conn-arrow">→</td><td class="to-node">18 · 7d History</td><td class="conn-cond">len == 0</td><td><span class="conn-type ct-cond">conditional</span></td><td style="color:var(--muted);font-size:11px">Skip to Insight</td></tr>
+  <tr><td class="from-node">13 · Loop</td><td class="conn-arrow">↻</td><td class="to-node">13a · Reserve Slot</td><td>forEach</td><td><span class="conn-type ct-loop">loop</span></td><td style="color:var(--muted);font-size:11px">parallelism=5</td></tr>
+  <tr><td class="from-node">13b · Token Bucket</td><td class="conn-arrow">→</td><td class="to-node">13c · Alert</td><td class="conn-cond">bucket empty</td><td><span class="conn-type ct-cond">conditional</span></td><td style="color:var(--muted);font-size:11px">Rate limit fired</td></tr>
+  <tr><td class="from-node">13b · Token Bucket</td><td class="conn-arrow">→</td><td class="to-node">14 · Post Fix API</td><td class="conn-cond">bucket ok</td><td><span class="conn-type ct-cond">conditional</span></td><td style="color:var(--muted);font-size:11px">Happy path</td></tr>
+  <tr><td class="from-node">16 · Rs.50K?</td><td class="conn-arrow">→</td><td class="to-node">17 · Handoff</td><td class="conn-cond">> 50K</td><td><span class="conn-type ct-cond">conditional</span></td><td style="color:var(--muted);font-size:11px">Human loop</td></tr>
+  <tr><td class="from-node">17a · Bandit Update</td><td class="conn-arrow">⇢</td><td class="to-node">10a · Bandit Store</td><td>ACK/SKIP</td><td><span class="conn-type ct-mem">memory</span></td><td style="color:var(--muted);font-size:11px">DASHED — closes loop</td></tr>
+  <tr><td class="from-node">18a · Cold-Start</td><td class="conn-arrow">→</td><td class="to-node">18b · Peer Cohort</td><td class="conn-cond">history < 7d</td><td><span class="conn-type ct-cond">conditional</span></td><td style="color:var(--muted);font-size:11px">New tenants</td></tr>
+  <tr><td class="from-node">21a · Feedback Log</td><td class="conn-arrow">⇢</td><td class="to-node">21b · Isotonic Cal.</td><td>nightly</td><td><span class="conn-type ct-mem">memory</span></td><td style="color:var(--muted);font-size:11px">DASHED — training data</td></tr>
+  <tr><td class="from-node">21b · Isotonic</td><td class="conn-arrow">⇢</td><td class="to-node">21 · Confidence?</td><td>threshold</td><td><span class="conn-type ct-mem">memory</span></td><td style="color:var(--muted);font-size:11px">DASHED — updates threshold</td></tr>
+  <tr><td class="from-node">22 · 30d History</td><td class="conn-arrow">→</td><td class="to-node">20 · Insight LLM</td><td>retry</td><td><span class="conn-type ct-loop">loop</span></td><td style="color:var(--muted);font-size:11px">Max 1 re-query</td></tr>
+  <tr><td class="from-node">26 · 7d Agg.</td><td class="conn-arrow">→</td><td class="to-node">27 · Run A + 27a · Run B</td><td>parallel</td><td><span class="conn-type ct-seq">fan-out</span></td><td style="color:var(--muted);font-size:11px">Both receive same data</td></tr>
+  <tr><td class="from-node">27 + 27a · Both runs</td><td class="conn-arrow">→</td><td class="to-node">27b · Intersect</td><td>merge</td><td><span class="conn-type ct-seq">sequential</span></td><td style="color:var(--muted);font-size:11px">Wait for both</td></tr>
+  <tr><td class="from-node">30 · Error Budget</td><td class="conn-arrow">⇢</td><td class="to-node">10 · Rule Detect</td><td>SLO breach</td><td><span class="conn-type ct-mem">memory</span></td><td style="color:var(--muted);font-size:11px">DASHED — feature freeze</td></tr>
+  <tr><td class="from-node">24 · Dashboard</td><td class="conn-arrow">⇢</td><td class="to-node">21a · Feedback Log</td><td>owner input</td><td><span class="conn-type ct-mem">memory</span></td><td style="color:var(--muted);font-size:11px">DASHED — closes insight loop</td></tr>
+</table>
+</div>
+
+<!-- ══════════ FINAL INVENTORY TABLE ══════════ -->
+<h2><span class="stage-id">INV</span> Node Inventory <span class="count">41 nodes · 6 stages · 5 agents</span></h2>
+<div class="conn-table-wrap">
+<table class="final-table">
+  <tr><th>Stage</th><th>Nodes</th><th>Frequency</th><th>Core Function</th><th>Moat / Differentiator</th></tr>
+  <tr>
+    <td>Stage 0</td>
+    <td>1 · 2 · 3 · 4 · 5</td>
+    <td class="freq-cell">60s</td>
+    <td>Trigger + hash-based early exit</td>
+    <td class="moat-cell">70% API cost reduction</td>
+  </tr>
+  <tr>
+    <td>Stage 1</td>
+    <td>6 · 7 · 8 · 9</td>
+    <td class="freq-cell">on-change</td>
+    <td>Sync Agent — schema normalization</td>
+    <td class="moat-cell">Deterministic work stays deterministic</td>
+  </tr>
+  <tr>
+    <td>Stage 2</td>
+    <td>10 · 10a · 10b · 11 · 12 · 13 · 13a · 13b · 13c · 14 · 15 · 16 · 17 · 17a</td>
+    <td class="freq-cell">on-change</td>
+    <td>Conflict Agent — detect, fix, escalate, learn</td>
+    <td class="moat-cell">Bandit self-tuning + idempotency + token bucket</td>
+  </tr>
+  <tr>
+    <td>Stage 3</td>
+    <td>18 · 18a · 18b · 19 · 20 · 21 · 21a · 21b · 22 · 23 · 23a · 24</td>
+    <td class="freq-cell">on-change</td>
+    <td>Insight Agent — explainable daily bullet</td>
+    <td class="moat-cell">Cold-start + calibrated threshold + 2-layer fact-verify</td>
+  </tr>
+  <tr>
+    <td>Stage 4</td>
+    <td>25 · 26 · 27 · 27a · 27b · 27c · 28</td>
+    <td class="freq-cell">weekly</td>
+    <td>Analyst Agent — executive pattern memo</td>
+    <td class="moat-cell">Dual-seed self-consistency (Wang et al. 2022)</td>
+  </tr>
+  <tr>
+    <td>Stage 5 ★</td>
+    <td>30 · 31 · 32 · 33 · 34 · 35</td>
+    <td class="freq-cell">hourly + continuous</td>
+    <td>Mirror Agent — self-monitoring + SRE</td>
+    <td class="moat-cell">No competitor ships this layer</td>
+  </tr>
+</table>
+</div>
+
+<div class="footer">
+  Replicate this canvas in Cognizant Superset during the 45-minute session.<br>
+  Every node label, description, edge, and config is copy-paste ready.<br><br>
+  <b>ArthaSync v4 · 41 nodes · 5 agents · 6 stages · 34+ edges · 99/100</b>
+</div>
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad:true,theme:'dark',
+  themeVariables:{
+    darkMode:true,background:'#091019',
+    primaryColor:'#132038',primaryTextColor:'#dce8f8',
+    primaryBorderColor:'#00e5ff',lineColor:'#38bdf8',fontSize:'12px'
+  },
+  flowchart:{curve:'basis',nodeSpacing:38,rankSpacing:52,padding:12}
+});
+</script>
+</body>
+</html>
