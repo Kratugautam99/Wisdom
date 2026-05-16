@@ -137,14 +137,18 @@ Wisdom-Primary-Repo
 │   ├── 30) Pandas Module.py                  # Pandas usage demo
 │   └── 31) Matplotlib and Seaborn Module.py  # Visualization with Matplotlib/Seaborn
 │
-├── Hackathons/                       # Hackathon Proofs
+├── Hackathons/                       # Hackathon Proofs and Works
 |   ├──Eurekathon-2024/
-│      ├── BeachDatasetFinal.csv
-│      ├── Smart India Hackathon.7z
-│      └── SmartIndiaHackathonMLModelFinal.ipynb
+│      ├── Beach_Dataset_Final.csv
+│      ├── Eurethon_2k24_Result.pdf
+│      ├── SIH_Certification.jpg
+│      ├── Smart_India_Hackathon.7z
+│      └── Smart_India_Hackathon_ML_Model_Final.ipynb
 |   └── Cognizant Technoverse Hackathon 2026/
 │      ├── Round_1_Qualified_Proof.pdf
-│      └── Only_3_Teams_From_Campus_Selected_[12 Students].xlsx
+│      ├── Only_3_Teams_From_Campus_Selected_[12 Students].xlsx
+│      ├── ArthaSync_Cognizant_Optimized.html
+│      └── ArthaSync_Idea_Submission.pdf
 |
 ├── SQL Resume Challenge/             # SQL practice assignments
 │   ├── Problems/  
