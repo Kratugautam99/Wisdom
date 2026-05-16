@@ -137,7 +137,7 @@ Wisdom-Primary-Repo
 │   ├── 30) Pandas Module.py                  # Pandas usage demo
 │   └── 31) Matplotlib and Seaborn Module.py  # Visualization with Matplotlib/Seaborn
 │
-├── Hackathons/
+├── Hackathons/                       # Hackathon Proofs
 |   ├──Eurekathon-2024/
 │      ├── BeachDatasetFinal.csv
 │      ├── Smart India Hackathon.7z
@@ -149,7 +149,12 @@ Wisdom-Primary-Repo
 ├── SQL Resume Challenge/             # SQL practice assignments
 │   ├── Problems/  
 │   ├── Solutions/  
-│   └── SQL-Practice/  
+│   └── SQL-Practice/
+|
+├── Co-Curricular Activities/         # Co Curricular Activities Proof
+│   ├── IIT_Bombay_Networking_Arena_Startup_Pitch.pdf  
+│   └── Technical_Team_Co-Head_Offer_Email.pdf
+|
 ├── MongoDB-(DataBases)               # NoSQL Database
 ├── SECURITY.md                       # Security policy
 ├── Demo Imgs                         # Demonstrative Images
