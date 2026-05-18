@@ -138,7 +138,7 @@ Wisdom-Primary-Repo
 │   └── 31) Matplotlib and Seaborn Module.py  # Visualization with Matplotlib/Seaborn
 │
 ├── Hackathons/                       # Hackathon Proofs and Works
-|   ├── Internal SIH Eurekathon-2024/
+|   ├── Internal SIH Eurekathon 2024/
 │      ├── Beach_Dataset_Final.csv
 │      ├── Eurethon_2k24_Result.pdf
 │      ├── SIH_Certification.jpg
