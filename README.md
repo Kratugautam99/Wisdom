@@ -150,7 +150,8 @@ Wisdom-Primary-Repo
 │      ├── ArthaSync_Cognizant_Optimized.html
 │      └── ArthaSync_Idea_Submission.pdf
 |
-├── SQL Resume Challenge/             # SQL practice assignments
+├── SQL Works/                        # SQL Files
+│   ├── Notes/  
 │   ├── Problems/  
 │   ├── Solutions/  
 │   └── SQL-Practice/
@@ -159,7 +160,11 @@ Wisdom-Primary-Repo
 │   ├── IIT_Bombay_Networking_Arena_Startup_Pitch.pdf  
 │   └── Technical_Team_Co-Head_Offer_Email.pdf
 |
-├── MongoDB-(DataBases)               # NoSQL Database
+├── NoSQL Works/                      # NoSQL Files
+│   ├── MongoDB/  
+│   ├── RedisDB/  
+│   └── Neo4JDB/
+|
 ├── SECURITY.md                       # Security policy
 ├── Demo Imgs                         # Demonstrative Images
 └── README.md   
