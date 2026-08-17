@@ -1,7 +1,9 @@
-with temp1 as (select fact_sales_monthly.product_code, fact_sales_monthly.customer_code, fact_sales_monthly.fiscal_year, 
-fact_sales_monthly.sold_quantity, fact_gross_price.gross_price from fact_sales_monthly 
-join fact_gross_price on fact_sales_monthly.product_code = fact_gross_price.product_code),
-temp2 as (select dim_customer.channel, sum(gross_price*sold_quantity) as gross_price_mln 
-from temp1 join dim_customer on dim_customer.customer_code = temp1.customer_code 
-where fiscal_year = 2021 group by dim_customer.channel)
-select channel, gross_price_mln, (gross_price_mln*100/3177769991.4) as percentage from temp2;
+SELECT 
+    c.channel,
+    SUM(s.sold_quantity * g.gross_price) AS gross_price_mln,
+    SUM(s.sold_quantity * g.gross_price) * 100 / 3177769991.4 AS percentage
+FROM fact_sales_monthly s
+JOIN fact_gross_price g ON s.product_code = g.product_code
+JOIN dim_customer c     ON s.customer_code = c.customer_code
+WHERE s.fiscal_year = 2021
+GROUP BY c.channel;
